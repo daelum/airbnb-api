@@ -16,7 +16,7 @@ app.use(logger('tiny'))
 app.use(
   cors({
     credentials: true,
-    origin: 'http://localhost:3000'
+    origin: 'http://localhost:4000'
   })
 )
 app.use(express.json())
@@ -42,7 +42,78 @@ require('./express-sessions')(app)
 // ::::
 // Create your routes here
 // ::::
+app.get('/', async (req, res) => {
+  console.log(req);
+  console.log('Hello from the Airbnb API');
+})
 
+app.get('/houses', async (req, res) => {
+  res.send(req.query);
+  console.log('Hello from Houses');
+})
+
+app.get('/houses/:id', async (req, res) => {
+  console.log(req.query);
+  console.log('hello from houses ID');
+})
+
+app.post('/houses', async (req, res) => {
+  console.log(body);
+  console.log(body);
+})
+
+app.patch('/houses/:id', async (req, res) => {
+  console.log(body);
+  console.log(query);
+})
+app.delete('/houses/:id', async (req, res) => {
+  console.log(_id);
+  console.log('deleted');
+})
+app.get('/bookings', async (req, res) => {
+  console.log(req.query);
+  console.log('hello from bookings');
+})
+
+app.post('/bookings', async (req, res) => {
+  console.log(body);
+  console.log(body);
+})
+
+app.get('/reviews', async (req, res) => {
+  console.log(req.query);
+  console.log('hello from reviews');
+})
+
+app.post('/reviews', async (req, res) => {
+  console.log(body);
+  console.log(query);
+})
+
+app.get('/profile', async (req, res) => {
+  console.log(req.query);
+  console.log('hello from profile');
+})
+
+app.patch('/profile', async (req, res) => {
+  console.log(body);
+  console.log('hello profile');
+})
+
+app.post('/login', async (req, res) => {
+  console.log(body);
+  console.log('hello login');
+})
+
+app.post('/signup', async (req, res) => {
+  console.log(body);
+  console.log('hello im signup');
+})
+
+app.get('/logout', async (req, res) => {
+  console.log(req.query);
+  console.log('hello from logout');
+})
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
   next(createError(404))

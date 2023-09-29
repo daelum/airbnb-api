@@ -1,4 +1,4 @@
 module.exports = {
-    DB_URL: 'YOUR_MONGODB_URL',
+    DB_URL: 'mongodb+srv://daelum:fVzGwRXQrzHeF1Yu@cluster0.tnfj5io.mongodb.net/',
     SESSION_SECRET: 'YOUR_SECRET'
 }
