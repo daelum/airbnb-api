@@ -43,12 +43,12 @@ require('./express-sessions')(app)
 // Create your routes here
 // ::::
 app.get('/', async (req, res) => {
-  console.log(req);
+  console.log(req.query);
   console.log('Hello from the Airbnb API');
 })
 
 app.get('/houses', async (req, res) => {
-  res.send(req.query);
+  console.log(req.query);
   console.log('Hello from Houses');
 })
 
@@ -58,26 +58,28 @@ app.get('/houses/:id', async (req, res) => {
 })
 
 app.post('/houses', async (req, res) => {
-  console.log(body);
-  console.log(body);
+  console.log(req.body);
+  console.log('Hello from post houses');
 })
 
 app.patch('/houses/:id', async (req, res) => {
-  console.log(body);
-  console.log(query);
+  console.log(req.body);
+  console.log('yayahaha');
 })
+
 app.delete('/houses/:id', async (req, res) => {
-  console.log(_id);
+  console.log(req.params.id);
   console.log('deleted');
 })
+
 app.get('/bookings', async (req, res) => {
   console.log(req.query);
   console.log('hello from bookings');
 })
 
 app.post('/bookings', async (req, res) => {
-  console.log(body);
-  console.log(body);
+  console.log(req.body);
+  console.log(' hello im bookings');
 })
 
 app.get('/reviews', async (req, res) => {
@@ -86,8 +88,8 @@ app.get('/reviews', async (req, res) => {
 })
 
 app.post('/reviews', async (req, res) => {
-  console.log(body);
-  console.log(query);
+  console.log(req.body);
+  console.log('hello im reviews');
 })
 
 app.get('/profile', async (req, res) => {
@@ -96,23 +98,23 @@ app.get('/profile', async (req, res) => {
 })
 
 app.patch('/profile', async (req, res) => {
-  console.log(body);
+  console.log(req.body);
   console.log('hello profile');
 })
 
 app.post('/login', async (req, res) => {
-  console.log(body);
+  console.log(req.body);
   console.log('hello login');
 })
 
 app.post('/signup', async (req, res) => {
-  console.log(body);
+  console.log(req.body);
   console.log('hello im signup');
 })
 
 app.get('/logout', async (req, res) => {
   console.log(req.query);
-  console.log('hello from logout');
+  console.log('hello from logout yaya');
 })
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
