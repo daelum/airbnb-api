@@ -108,11 +108,18 @@ app.patch('/profile', async (req, res) => {
   console.log('hello profile');
 })
 
+//LOGIN
 app.post('/login', async (req, res) => {
-  console.log(req.body);
+  console.log('hello');
+  const loginMatch = await Users.findOne({
+    email: req.body.email,
+    password: req.body.password
+  })
+  console.log(loginMatch);
   console.log('hello login');
 })
 
+//SIGNUP
 app.post('/signup', async (req, res) => {
   console.log('hello');
   const userExists = await Users.findOne({
