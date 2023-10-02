@@ -10,7 +10,7 @@ const { DB_URL } = require('./db')
 
 // import models
 const Users = require('./models/users')
-const Houses = require('./modles/houses')
+const Houses = require('./models/houses')
 const Reviews = require('./models/reviews')
 const Bookings = require('./models/bookings')
 
@@ -114,7 +114,8 @@ app.post('/login', async (req, res) => {
 })
 
 app.post('/signup', async (req, res) => {
-  console.log(req.body);
+  const users = await Users.create(req.body)
+  res.send(users);
   console.log('hello im signup');
 })
 
