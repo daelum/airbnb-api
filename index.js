@@ -22,7 +22,7 @@ app.use(logger('tiny'))
 app.use(
   cors({
     credentials: true,
-    origin: 'http://localhost:4000'
+    origin: 'http://localhost:3000'
   })
 )
 app.use(express.json())
@@ -114,10 +114,18 @@ app.post('/login', async (req, res) => {
 })
 
 app.post('/signup', async (req, res) => {
+  console.log('hello');
+  const userExists = await Users.findOne({
+    email: req.body.email
+  })
+  console.log(userExists);
+  if (userExists) {
+    res.send('User with this email already exists') 
+  } else {
   const user = await Users.create(req.body)
-  user ? res.send('User with this email already exists') :
   res.send(user)
   console.log('hello im signup');
+  }
 })
 
 app.get('/logout', async (req, res) => {
