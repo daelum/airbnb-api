@@ -16,3 +16,5 @@ const Users = mongoose.model('users', {
         required: true
     }
 })
+
+module.exports = Users
