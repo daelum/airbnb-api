@@ -114,9 +114,9 @@ app.post('/login', async (req, res) => {
 })
 
 app.post('/signup', async (req, res) => {
-  const users = await Users.create(req.body)
-  console.log(req.body);
-  res.send(users)
+  const user = await Users.create(req.body)
+  user ? res.send('User with this email already exists') :
+  res.send(user)
   console.log('hello im signup');
 })
 
