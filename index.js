@@ -8,6 +8,12 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const { DB_URL } = require('./db')
 
+// import models
+const Users = require('./models/users')
+const Houses = require('./modles/houses')
+const Reviews = require('./models/reviews')
+const Bookings = require('./models/bookings')
+
 // Build the App
 const app = express()
 
