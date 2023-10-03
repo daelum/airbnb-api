@@ -111,11 +111,16 @@ app.patch('/profile', async (req, res) => {
 //LOGIN
 app.post('/login', async (req, res) => {
   console.log('hello');
-  const loginMatch = await Users.findOne({
+  const user = await Users.findOne({
     email: req.body.email,
     password: req.body.password
   })
-  console.log(loginMatch);
+  if (user) {
+    req.login(user, (err) => {
+      if(err) { return next(err) } else res.send(user)
+    })
+  }
+  console.log(user);
   console.log('hello login');
 })
 
@@ -137,8 +142,17 @@ app.post('/signup', async (req, res) => {
 
 app.get('/logout', async (req, res) => {
   console.log(req.query);
+  req.logout(function(err) {
+    if (err) { return next(err) }
+      req.session.destroy(function (err) {
+        if (err) { return next(err) }
+        res.clearCookie('connect.sid')
+        res.send('Logged out')
+    })
+  })
   console.log('hello from logout yaya');
 })
+
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
   next(createError(404))
