@@ -110,7 +110,8 @@ app.patch('/profile', async (req, res) => {
 
 //LOGIN
 app.post('/login', async (req, res) => {
-  console.log('hello');
+  try {
+    console.log('hello');
   const user = await Users.findOne({
     email: req.body.email,
     password: req.body.password
@@ -118,7 +119,7 @@ app.post('/login', async (req, res) => {
   if (user) {
     req.login(user, (err) => {
       if(err) { 
-        return next(err) 
+        throw err
       } else {
         res.send(user)
       }
@@ -128,6 +129,9 @@ app.post('/login', async (req, res) => {
   }
   console.log(user);
   console.log('hello login');
+  } catch (error) {
+    throw error
+  }
 })
 
 //SIGNUP
@@ -146,6 +150,7 @@ app.post('/signup', async (req, res) => {
   }
 })
 
+//LOGOUT
 app.get('/logout', async (req, res) => {
   console.log(req.query);
   req.logout(function(err) {
