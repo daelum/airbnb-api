@@ -117,8 +117,14 @@ app.post('/login', async (req, res) => {
   })
   if (user) {
     req.login(user, (err) => {
-      if(err) { return next(err) } else res.send(user)
+      if(err) { 
+        return next(err) 
+      } else {
+        res.send(user)
+      }
     })
+  } else {
+    res.send('Invalid Email/Password!')
   }
   console.log(user);
   console.log('hello login');
