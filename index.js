@@ -59,6 +59,15 @@ app.get('/houses', async (req, res) => {
 })
 
 app.get('/houses/:id', async (req, res) => {
+  try{
+    cosnt house = await Houses.findById(req.params.id).populate({
+      path: "Host",
+      select: "name"
+    })
+
+  } catch (err) {
+
+  }
   console.log(req.query);
   console.log('hello from houses ID');
 })
@@ -84,13 +93,39 @@ app.post('/houses', async (req, res) => {
 })
 
 app.patch('/houses/:id', async (req, res) => {
-  console.log(req.body);
-  console.log('yayahaha');
+  try {
+    let house = await Houses.findByIdAndUpdate(req.params.id)
+    if (req.isAuthenticated()) {
+      if (req.user._id.equals(house.host)) {
+        let updatedHouse = await Houses.findById(req.params.id, req.body)
+          res.send(updatedHouse)
+      } else {
+        res.send('Not Authorized')
+      }
+    } else {
+      res.send('Please Login First')
+    }
+  } catch (err) {
+    res.send(err)
+  }
 })
 
 app.delete('/houses/:id', async (req, res) => {
-  console.log(req.params.id);
-  console.log('deleted');
+    try {
+    let house = await Houses.findByIdAndDelete(req.params.id)
+    if (req.isAuthenticated()) {
+      if (req.user._id.equals(house.host)) {
+        let deleteHouse = await Houses.findById(req.params.id, req.body)
+          res.send(deleteHouse)
+      } else {
+        res.send('Not Authorized')
+      }
+    } else {
+      res.send('Please Login First')
+    }
+  } catch (err) {
+    res.send(err)
+  }
 })
 
 app.get('/bookings', async (req, res) => {
