@@ -25,3 +25,4 @@ const Reviews = mongoose.model('reviews', {
         type: Number,
     }
 })
+module.exports = Reviews

@@ -64,8 +64,23 @@ app.get('/houses/:id', async (req, res) => {
 })
 
 app.post('/houses', async (req, res) => {
-  console.log(req.body);
-  console.log('Hello from post houses');
+  console.log(req.user);
+  console.log(req.isAuthenticated());
+  if (req.isAuthenticated()) {
+    let house = await Houses.create({
+      req.body
+      // description: req.body.description,
+      // host: req.body.host,
+      // location: req.body.location,
+      // photos: req.body.photos,
+      // rooms: req.body.rooms,
+      // price: req.body.price,
+      // title: req.body.title
+    })
+    return house
+  } else {
+    return res.send('Not Authorized');
+  }
 })
 
 app.patch('/houses/:id', async (req, res) => {

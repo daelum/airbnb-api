@@ -33,3 +33,4 @@ const Houses = mongoose.model('houses', {
         required: true
     }
 })
+module.exports = Houses

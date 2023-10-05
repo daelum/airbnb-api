@@ -22,3 +22,4 @@ const Bookings = mongoose.model('bookings', {
         ref: 'houses'
     }
 })
+module.exports = Bookings
