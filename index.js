@@ -60,17 +60,43 @@ app.get('/houses', async (req, res) => {
 
 app.get('/houses/:id', async (req, res) => {
   console.log(req.query);
+  try {
+    await Houses.findById(req.params.id)
+  } catch(err) {
+    res.send(err)
+  }
   console.log('hello from houses ID');
 })
-
+//HOUSES POST
+// Use the /houses POST route to create a document in the houses collection using the houses model 
+// and the request body
+// Then respond with the created document
 app.post('/houses', async (req, res) => {
-  console.log(req.body);
-  console.log('Hello from post houses');
+  try {
+      if (req.isAuthenticated()) {
+        req.body.host = req.user._id
+        console.log(req.body);
+        const house = await Houses.create(req.body)
+        res.send(house) 
+        console.log('Hello from post houses')
+      } else {
+        console.log("user is not logged in")
+      }
+  }
+  catch(err) {
+    throw err
+  }
 })
 
+//UPDATE HOUSE
 app.patch('/houses/:id', async (req, res) => {
   console.log(req.body);
   console.log('yayahaha');
+  if (req.isAuthenticated()) {
+
+  } else {
+    console.log('user is not authorized')
+  }
 })
 
 // DELETE HOUSE
@@ -125,7 +151,7 @@ app.post('/login', async (req, res) => {
   })
   if (user) {
     req.login(user, (err) => {
-      if(err) { 
+      if (err) { 
         throw err
       } else {
         res.send(user)
@@ -152,6 +178,10 @@ app.post('/signup', async (req, res) => {
     res.send('User with this email already exists') 
   } else {
   const user = await Users.create(req.body)
+  req.login(user, (err) => {
+    if (err) { throw err}
+    console.log('user logged in')
+  })
   res.send(user)
   console.log('hello im signup');
   }
