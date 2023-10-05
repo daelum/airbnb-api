@@ -15,11 +15,7 @@ const Houses = mongoose.model('houses', {
         type: String,
         required: true
     },  
-    photos: [
-        {
-        type: String,
-        }
-    ],
+    photos: [String],
     price: {
         type: Number,
         required: true
@@ -33,3 +29,5 @@ const Houses = mongoose.model('houses', {
         required: true
     }
 })
+
+module.exports = Houses

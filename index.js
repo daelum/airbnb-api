@@ -73,8 +73,15 @@ app.patch('/houses/:id', async (req, res) => {
   console.log('yayahaha');
 })
 
+// DELETE HOUSE
 app.delete('/houses/:id', async (req, res) => {
   console.log(req.params.id);
+  console.log('getting closer');
+  if(req.isAuthenticated()) {
+
+  } else {
+    console.log('user is not authorized')
+  }
   console.log('deleted');
 })
 
