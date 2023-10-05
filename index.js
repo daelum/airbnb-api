@@ -54,13 +54,25 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/houses', async (req, res) => {
-  console.log(req.query);
+  try {
+    const allHouses = await Houses.find({
+      rooms: {$gte:req.query.rooms}, 
+      price: {$lte:req.query.price},
+      location: req.query.location,
+      title: req.query.location,
+     }).sort('-price')
+    // req.query.rooms
+    
+    res.send(allHouses)
+  } catch(err) {
+    res.send(err)
+  }
   console.log('Hello from Houses');
 })
 
 app.get('/houses/:id', async (req, res) => {
   try{
-    cosnt house = await Houses.findById(req.params.id).populate({
+    const house = await Houses.findById(req.params.id).populate({
       path: "Host",
       select: "name"
     })
@@ -69,29 +81,35 @@ app.get('/houses/:id', async (req, res) => {
 
   }
   console.log(req.query);
+  try {
+    await Houses.findById(req.params.id)
+  } catch(err) {
+    res.send(err)
+  }
   console.log('hello from houses ID');
 })
-
+//HOUSES POST
+// Use the /houses POST route to create a document in the houses collection using the houses model 
+// and the request body
+// Then respond with the created document
 app.post('/houses', async (req, res) => {
-  console.log(req.user);
-  console.log(req.isAuthenticated());
-  if (req.isAuthenticated()) {
-    let house = await Houses.create({
-      req.body
-      // description: req.body.description,
-      // host: req.body.host,
-      // location: req.body.location,
-      // photos: req.body.photos,
-      // rooms: req.body.rooms,
-      // price: req.body.price,
-      // title: req.body.title
-    })
-    return house
-  } else {
-    return res.send('Not Authorized');
+  try {
+      if (req.isAuthenticated()) {
+        req.body.host = req.user._id
+        console.log(req.body);
+        const house = await Houses.create(req.body)
+        res.send(house) 
+        console.log('Hello from post houses')
+      } else {
+        console.log("user is not logged in")
+      }
+  }
+  catch(err) {
+    throw err
   }
 })
 
+//UPDATE HOUSE
 app.patch('/houses/:id', async (req, res) => {
   try {
     let house = await Houses.findByIdAndUpdate(req.params.id)
@@ -110,6 +128,7 @@ app.patch('/houses/:id', async (req, res) => {
   }
 })
 
+// DELETE HOUSE
 app.delete('/houses/:id', async (req, res) => {
     try {
     let house = await Houses.findByIdAndDelete(req.params.id)
@@ -168,7 +187,7 @@ app.post('/login', async (req, res) => {
   })
   if (user) {
     req.login(user, (err) => {
-      if(err) { 
+      if (err) { 
         throw err
       } else {
         res.send(user)
@@ -195,6 +214,10 @@ app.post('/signup', async (req, res) => {
     res.send('User with this email already exists') 
   } else {
   const user = await Users.create(req.body)
+  req.login(user, (err) => {
+    if (err) { throw err}
+    console.log('user logged in')
+  })
   res.send(user)
   console.log('hello im signup');
   }
