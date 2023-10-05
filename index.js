@@ -54,7 +54,13 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/houses', async (req, res) => {
-  console.log(req.query);
+  try {
+    const allHouses = await Houses.find({})
+    console.log(allHouses);
+    res.send(allHouses)
+  } catch(err) {
+    res.send(err)
+  }
   console.log('Hello from Houses');
 })
 
