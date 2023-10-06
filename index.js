@@ -52,13 +52,20 @@ app.get('/', async (req, res) => {
 
 app.get('/houses', async (req, res) => {
   try {
-    const allHouses = await Houses.find({
-      rooms: {$gte:req.query.rooms}, 
-      price: {$lte:req.query.price},
-      location: req.query.location,
-      title: req.query.location,
-     }).sort('-price')
-    // req.query.rooms
+    const myQuery = {}
+    if (req.query.rooms) {
+      myQuery.rooms = {$gte:req.query.rooms}
+    }
+    if (req.query.price) {
+      myQuery.price = {$lte:req.query.price}
+    }
+    if (req.query.location) {
+      myQuery.location = req.query.location
+    }
+    if (req.query.title) {
+      myQuery.title = req.query.title
+    }
+    const allHouses = await Houses.find(myQuery).sort('-price')
     res.send(allHouses)
   } catch(err) {
     res.status(500).send(err)
