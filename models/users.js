@@ -4,7 +4,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const Users = mongoose.model('users', {
     avatar: String,
     email: {
-        type: String,
+        type: String, 
         required: true
     },
     name: {

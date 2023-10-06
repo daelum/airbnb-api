@@ -45,9 +45,6 @@ require('./express-sessions')(app)
 
 // Routes
 
-// ::::
-// Create your routes here
-// ::::
 app.get('/', async (req, res) => {
   console.log(req.query);
   console.log('Hello from the Airbnb API');
@@ -62,58 +59,62 @@ app.get('/houses', async (req, res) => {
       title: req.query.location,
      }).sort('-price')
     // req.query.rooms
-    
     res.send(allHouses)
   } catch(err) {
-    res.send(err)
+    res.status(500).send(err)
   }
   console.log('Hello from Houses');
 })
 
 app.get('/houses/:id', async (req, res) => {
-  try{
+   try {
+    // Check if the user is authenticated
+    if (!req.isAuthenticated()) {
+      return res.status(401).send('Please Login First');
+    }
+    // User is authenticated, proceed with retrieving the house data
     const house = await Houses.findById(req.params.id).populate({
-      path: "Host",
-      select: "name"
-    })
-
+      path: 'host',
+      select: 'name',
+    });
+    // Check if the house exists
+    if (!house) {
+      return res.status(404).send('House not found');
+    }
+    // Return the house data
+    res.send(house);
   } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
 
-  }
-  console.log(req.query);
-  try {
-    await Houses.findById(req.params.id)
-  } catch(err) {
-    res.send(err)
-  }
-  console.log('hello from houses ID');
-})
 //HOUSES POST
-// Use the /houses POST route to create a document in the houses collection using the houses model 
-// and the request body
-// Then respond with the created document
+
 app.post('/houses', async (req, res) => {
   try {
-      if (req.isAuthenticated()) {
-        req.body.host = req.user._id
-        console.log(req.body);
-        const house = await Houses.create(req.body)
-        res.send(house) 
-        console.log('Hello from post houses')
-      } else {
-        console.log("user is not logged in")
-      }
+    // Check if the user is authenticated
+    if (!req.isAuthenticated()) {
+      return res.status(401).send('Please Login First');
+    }
+    // if authenticated, proceed with creating the house
+    req.body.host = req.user._id;
+    console.log(req.body);
+
+    const house = await Houses.create(req.body);
+      res.status(201).send(house);
+    console.log('Hello from post houses');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
   }
-  catch(err) {
-    throw err
-  }
-})
+});
 
 //UPDATE HOUSE
 app.patch('/houses/:id', async (req, res) => {
   try {
-    let house = await Houses.findByIdAndUpdate(req.params.id)
     if (req.isAuthenticated()) {
+      let house = await Houses.findByIdAndUpdate(req.params.id)
       if (req.user._id.equals(house.host)) {
         let updatedHouse = await Houses.findById(req.params.id, req.body)
           res.send(updatedHouse)
@@ -121,7 +122,7 @@ app.patch('/houses/:id', async (req, res) => {
         res.send('Not Authorized')
       }
     } else {
-      res.send('Please Login First')
+      res.status(401).send('Please Login First')
     }
   } catch (err) {
     res.send(err)
@@ -148,34 +149,116 @@ app.delete('/houses/:id', async (req, res) => {
 })
 
 app.get('/bookings', async (req, res) => {
-  console.log(req.query);
-  console.log('hello from bookings');
+  try {
+    const booking = await Bookings.find({
+      author: req.user._id, 
+      house: req.query._id,
+    }).sort('house')
+    res.status(200).send(booking)
+  } catch(err) {
+    res.status(500).send(err)
+  }
+  console.log('Hello from Booking');
 })
+
 
 app.post('/bookings', async (req, res) => {
-  console.log(req.body);
-  console.log(' hello im bookings');
+    try {
+      if (req.isAuthenticated()) {
+        req.body.author = req.user._id
+        console.log(req.body);
+        const booking = await Bookings.create(req.body)
+        res.status(201).send(booking) 
+        console.log('Hello im booking')
+      } else {
+        console.log("User is not logged in")
+        res.status(401).send('User not Logged in')
+      }
+  }
+  catch(err) {
+    res.status(500).send(err)
+  }
 })
+
 
 app.get('/reviews', async (req, res) => {
-  console.log(req.query);
-  console.log('hello from reviews');
-})
+    try {
+    // Check if the 'house' query parameter is provided in the request
+    if (!req.query.house) {
+      return res.status(400).send('House ID is required');
+    }
+    // Retrieve all reviews with house _id
+    const review = await Reviews.find({ house: req.query.house });
+
+    // Return the reviews as a response
+    res.send(review);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
 
 app.post('/reviews', async (req, res) => {
-  console.log(req.body);
-  console.log('hello im reviews');
+    try {
+    // Check if the user is authenticated
+    if (!req.isAuthenticated()) {
+      return res.status(401).send('Please Login First');
+    }
+    // Assuming you have a `Review` model defined
+    const Reviews = require('./models/reviews');
+
+    // Create a new review using the request body
+    const createdReview = await Reviews.create({
+      author: req.user._id,
+      description: req.body.description,
+      house: req.body.house, 
+      rating: req.body.rating,
+    })
+    // Return the created review as a response
+    res.status(201).send(createdReview);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
 })
+
 
 app.get('/profile', async (req, res) => {
-  console.log(req.query);
-  console.log('hello from profile');
-})
+    try {
+    // Check if the user is authenticated
+    if (!req.isAuthenticated()) {
+      return res.status(401).send('Please Login First');
+    }
+    // if authenticated, access the user information
+    const loggedInUser = req.user;
+    // Respond with the user data
+    res.status(200).send(loggedInUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
 
 app.patch('/profile', async (req, res) => {
-  console.log(req.body);
-  console.log('hello profile');
-})
+  try {
+    // Check if the user is authenticated
+    if (!req.isAuthenticated()) {
+      return res.status(401).send('Please Login First');
+    }
+    const User = require('./models/users'); 
+    // Update user's profile in the database
+    await User.findByIdAndUpdate(
+      req.user._id, 
+      req.body,
+    );
+    const updatedUser = await User.findById(req.user._id);
+    // Respond with the updated user
+    res.status(200).send(updatedUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
 
 //LOGIN
 app.post('/login', async (req, res) => {
